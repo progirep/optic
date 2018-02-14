@@ -13,16 +13,17 @@ Preparation:
 
 The optic tool is written in C++. Before the tool can be used, some libraries need to be downloaded:
 
-- The CUDD decision diagram library by [http://vlsi.colorado.edu/~fabio/ Fabio Somenzi], version 3.0
-- The SAT solver [http://fmv.jku.at/lingeling/ lingeling] by Armin Biere
+- The CUDD decision diagram library by [Fabio Somenzi](http://vlsi.colorado.edu/~fabio/), version 3.0
+- The SAT solver [lingeling](http://fmv.jku.at/lingeling/) by Armin Biere
 
-For rerunning the experiments, the [https://github.com/sat-group/genpce GenPCE] tool also needs to be downloaded.
+For rerunning the experiments, the [GenPCE](https://github.com/sat-group/genpce) tool also needs to be downloaded. An additional timeout script is also needed for running the experiments.
 
 All of them can be obtained using the following command sequence (tested on Ubuntu Linux v.17.10)
 
     cd lib; wget ftp://vlsi.colorado.edu/pub/cudd-3.0.0.tar.gz; tar -xvzf cudd-3.0.0.tar.gz; cd ..
     cd lib; wget http://fmv.jku.at/lingeling/lingeling-bbc-9230380-160707.tar.gz; tar -xvzf lingeling-bbc-9230380-160707.tar.gz; cd ..
     cd lib; git clone https://github.com/sat-group/genpce; cd genpce; git checkout 87cf2949ff360af1431d8b4ae09ad4018a8abe80; cd ../..
+    cd tools; wget https://raw.githubusercontent.com/pshved/timeout/edb59c93c167c15ede5ccc2795e1abee25ebf9b4/timeout; chmod +x timeout; cd ..
 
 Please also visit the home pages of these tools.
 
@@ -52,10 +53,42 @@ The Optic tool takes constraint specifications in the form of Boolean formulas. 
     cb1 = cb0 & (a1 | b1) | (a1 & b1)
     encode = true & (x0 <-> ob0) & (x1 <-> ob1) & (x2 <-> cb1)
 
-Variable declarations and comments are always on separate lines. The other lines assign Boolean formula to new identifiers using the usual Boolean operators. The encoded constraint must be stored in the /encode/ variable at the end of the constraint description. Variable numbers in the CNF encoding are assigned in the order in which the variables are declared in the constraint files.
+Variable declarations and comments are always on separate lines. The other lines assign Boolean formula to new identifiers using the usual Boolean operators. The encoded constraint must be stored in the _encode_ variable at the end of the constraint description. Variable numbers in the CNF encoding are assigned in the order in which the variables are declared in the constraint files.
 
-To compute a greedy CNF encoding, optic takes two parameters: +--greedy+ and the constraint file name. The generated CNF encoding is printed on the standard output.
+To compute a greedy CNF encoding, optic takes two parameters: `--greedy` and the constraint file name. The generated CNF encoding is printed on the standard output.
 
-To compute an approximately propagation complete and approximately conflict propagating CNF encoding, optic takes four parameters: +--approx+, the propagation completeness quality level, the constraint propagation quality level, and the constraint file name. The generated CNF encoding is then printed on the standard output. For this mode of operation, the environment variable MAXSATSOLVERPATH needs to point to a MaxSAT solver executable, such as LMHS.
+To compute an approximately propagation complete and approximately conflict propagating CNF encoding, optic takes four parameters: `--approx`, the propagation completeness quality level, the constraint propagation quality level, and the constraint file name. The generated CNF encoding is then printed on the standard output. For this mode of operation, the environment variable MAXSATSOLVERPATH needs to point to a MaxSAT solver executable, such as LMHS.
 
+
+Running the benchmarks from the paper
+-------------------------------------
+
+Step 1 is to compile GenPCE:
+
+    cd lib/genpce; make; cd ../..
+    
+Then, we need to call all the benchmark generator scripts in the "benchmarks" directory:
+
+    cd benchmarks; ./generator_adder.py; cd ..
+    cd benchmarks; ./generator_from_genpce.py; cd ..
+    cd benchmarks; ./generator_alldiff_cook.py; cd ..
+    cd benchmarks; ./generator_mult.py; cd ..
+    cd benchmarks; ./generator_alldiff_ladder.py; cd ..
+    cd benchmarks; ./generator_sqrt.py; cd ..
+    cd benchmarks; ./generator_alldiff.py; cd ..
+    cd benchmarks; ./generator_square.py; cd ..
+    cd benchmarks; ./generator_bipatite_matching.py; cd ..
+    cd benchmarks; ./generator_ult.py; cd ..
+
+All of these steps generate files with the names `gen_`...`.txt` in the benchmarks folder. These are constraint specification files in the format described above. Now we can make the Makefile for running the experiments:
+
+    cd benchmarks; ./make_benchmark_makefile.py; cd ..
+    
+The experiments can now be run with:
+    
+    cd benchmarks; make; cd ..
+    
+If multiple processor cores and more than 8 GB of RAM per core is available, the computation time can be decreased by running `make -j`(number of processor cores) instead. 
+
+At the end of the computation, the file "benchmarks/table.pdf" contains the overall result table, and "benchmarks/tableshort.pdf" the short result table.
 

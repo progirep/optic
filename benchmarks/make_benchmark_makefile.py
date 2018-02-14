@@ -27,7 +27,8 @@ with open("Makefile","w") as makefile:
     
     for dependency in dependencies:
         print >>makefile,dependency,
-    print >>makefile,"\n\t./make_results_table.py > table.tex\n\tpdflatex table.tex\n\tpdflatex table.tex\n\tpdflatex table.tex"
+    print >>makefile,"\n\t./make_results_table_paper.py > table.tex\n\tpdflatex table.tex\n\tpdflatex table.tex\n\tpdflatex table.tex"
+    print >>makefile,"\n\t./make_results_table_paper_short.py > tableshort.tex\n\tpdflatex tableshort.tex\n\tpdflatex tableshort.tex\n\tpdflatex tableshort.tex"
     print >>makefile,"\n\techo \"Done!\"\n"
     
     for a in allBenchmarkFiles:

@@ -7,7 +7,7 @@
  * @brief Prints the SAT encoding. Orders the literals to allow better comparisons
  */
 void EncoderContext::printEncoding() {
-    std::cout << "Encoding start\n";
+    //std::cout << "Encoding start\n";
     for (auto it : clauses) {
         // std::sort(it.begin(),it.end());
         for (auto it2 : it) {
@@ -15,7 +15,7 @@ void EncoderContext::printEncoding() {
         }
         std::cout << "0\n";
     }
-    std::cout << "Encoding end\n";
+    //std::cout << "Encoding end\n";
     std::cout.flush();
 }
 
