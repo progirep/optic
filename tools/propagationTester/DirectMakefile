@@ -1,0 +1,55 @@
+#================================= Direct Makefile =====================================
+
+# Definitions
+COMPILEROPTIONS = $(shell $(CC) ../../src/BFAbstractionLibrary/compilerOptionGenerator.c -o /tmp/BFAbstractionCompilerOptionsProducer-$(USER);/tmp/BFAbstractionCompilerOptionsProducer-$(USER))
+DEFINES       = -DUSE_CUDD -DNDEBUG
+CFLAGS        = -pipe -O3 -g -mtune=native $(COMPILEROPTIONS) -Wall -W -fPIC $(DEFINES)
+CXXFLAGS      = -pipe -O3 -g -std=c++11 -mtune=native $(COMPILEROPTIONS) -fPIC $(DEFINES)
+INCPATH       = -I. -I../../lib/cudd-3.0.0/ -I../../lib/cudd-3.0.0/cudd -I../../lib/cudd-3.0.0/mtr -I../../lib/cudd-3.0.0/epd -I../../lib/cudd-3.0.0/st -I../../lib/cudd-3.0.0/util -I../../lib/cudd-3.0.0/dddmp -I../../src/BFAbstractionLibrary 
+LINK          = g++
+LFLAGS        = 
+
+# Object files
+OBJECTS       = main.o \
+		../../src/BFAbstractionLibrary/bddDump.o ../../src/BFAbstractionLibrary/BFCuddManager.o \
+		../../src/BFAbstractionLibrary/BFCuddVarCube.o ../../src/BFAbstractionLibrary/BFCudd.o \
+		../../src/BFAbstractionLibrary/BFCuddMintermEnumerator.o ../../src/BFAbstractionLibrary/BFCuddVarVector.o \
+                $(filter-out ../../lib/cudd-3.0.0/cudd/testextra.o,$(filter-out ../../lib/cudd-3.0.0/cudd/testcudd.o,$(patsubst %.c,%.o,$(wildcard ../../lib/cudd-3.0.0/cudd/*.c)))) \
+                $(filter-out ../../lib/cudd-3.0.0/mtr/testmtr.o,$(patsubst %.c,%.o,$(wildcard ../../lib/cudd-3.0.0/mtr/*.c))) \
+                $(patsubst %.c,%.o,$(wildcard ../../lib/cudd-3.0.0/epd/*.c)) \
+                $(filter-out ../../lib/cudd-3.0.0/st/testst.o,$(patsubst %.c,%.o,$(wildcard ../../lib/cudd-3.0.0/st/*.c))) \
+                $(filter-out ../../lib/cudd-3.0.0/util/cpu_stats.o,$(patsubst %.c,%.o,$(wildcard ../../lib/cudd-3.0.0/util/*.c))) \
+                $(filter-out ../../lib/cudd-3.0.0/dddmp/testdddmp.o,$(patsubst %.c,%.o,$(wildcard ../../lib/cudd-3.0.0/dddmp/*.c)))
+
+# Headers
+IMPORTANT_HEADERS = ../../src/BFAbstractionLibrary/bddDump.h \
+	../../src/BFAbstractionLibrary/BFCudd.h \
+	../../src/BFAbstractionLibrary/BFCuddInlines.h \
+	../../src/BFAbstractionLibrary/BFCuddManager.h \
+	../../src/BFAbstractionLibrary/BFCuddMintermEnumerator.h \
+	../../src/BFAbstractionLibrary/BFCuddVarCube.h \
+	../../src/BFAbstractionLibrary/BFCuddVarVector.h \
+	../../src/BFAbstractionLibrary/BF.h
+
+# Executable & Cleaning
+optic: $(OBJECTS)
+	$(LINK) $(LFLAGS) -o propagationtester $(OBJECTS)
+
+clean: 
+	rm -f $(OBJECTS) ../../lib/cudd-3.0.0/config.h
+
+# Special Transition Rules
+../../lib/cudd-3.0.0/config.h:
+	cd ../../lib/cudd-3.0.0; ./configure
+
+main.o : main.cpp ../../lib/cudd-3.0.0/config.h $(IMPORTANT_HEADERS)
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o "$@" "$<"
+
+# General Translation rules
+%.o : %.cpp ../../lib/cudd-3.0.0/config.h $(IMPORTANT_HEADERS)
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o "$@" "$<"
+
+%.o : %.c ../../lib/cudd-3.0.0/config.h
+	$(CC) -c $(CFLAGS) $(INCPATH) -o "$@" "$<"
+
+
