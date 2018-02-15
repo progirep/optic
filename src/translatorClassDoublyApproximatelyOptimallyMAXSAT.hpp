@@ -1158,17 +1158,17 @@ template<class SolverType> void EncoderContextDoublyApproximatelyOptimallyPropag
 
     std::cerr << "RECURSE DONE!\n";
 
-    // Ok, now generate a MAXSAT output file
+     // Ok, now generate a MAXSAT output file
     std::ostringstream outFilename;
     outFilename << std::string(std::tmpnam(nullptr)) << "-optic-" << getpid() << ".maxsat";
     std::ofstream maxSATFile(outFilename.str(),std::ofstream::out);
-    maxSATFile << "p wcnf " << originalClauses.size() << " " << originalClauses.size()+allMaxSatClausesNumber << " 15\n";
+    maxSATFile << "p wcnf " << originalClauses.size() << " " << originalClauses.size()+allMaxSatClausesNumber << " " << originalClauses.size()+10 << "\n";
     for (int i=0;i<static_cast<int>(originalClauses.size());i++) {
         maxSATFile << "1 " << -1*(i+1) << " 0\n";
     }
     for (auto &clausesBylength : maxSATClauseList) {
         for (auto &clause : clausesBylength) {
-            maxSATFile << "15";
+            maxSATFile << originalClauses.size()+10;
             for (auto lit : clause) maxSATFile << " " << lit;
             maxSATFile << " 0\n";
         }
@@ -1210,7 +1210,7 @@ template<class SolverType> void EncoderContextDoublyApproximatelyOptimallyPropag
             int lit;
             while (thisLine >> lit) {
                 clauseSelection.insert(lit);
-                std::cerr << "Clause push: " << lit << "out of" << originalClauses.size() << std::endl;
+                //std::cerr << "Clause push: " << lit << "out of" << originalClauses.size() << std::endl;
             }
         }
     }
@@ -1218,7 +1218,7 @@ template<class SolverType> void EncoderContextDoublyApproximatelyOptimallyPropag
     // Copy the selected clauses over
     for (unsigned int i=0;i<originalClauses.size();i++) {
         if (clauseSelection.count(i+1)>0) {
-            std::cerr << "Pushing Ice: " << i << std::endl;
+            //std::cerr << "Pushing Ice: " << i << std::endl;
             clauses.push_back(originalClauses[i]);
         } else if (clauseSelection.count(-1-i)>0) {
             // Not selected
