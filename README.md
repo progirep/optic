@@ -117,7 +117,7 @@ in the file `casestudies/factoring/generate_benchmarks.py` needs to be removed (
 Before running the benchmarks, we need to compile lingeling and download and compile MapleSAT as solvers:
 
     cd lib/lingeling-bbc-9230380-160707; ./configure.sh; make; cd ../..
-    cd lib; wget .../MapleCOMSPS_LRB.zip; unzip MapleCOMSPS_LRB.zip; cd MapleCOMSPS_LRB/core; export MROOT=$PWD/..; make; cd ../../..
+    cd lib; wget https://sites.google.com/a/gsd.uwaterloo.ca/maplesat/MapleCOMSPS_LRB.zip; unzip MapleCOMSPS_LRB.zip; cd MapleCOMSPS_LRB/core; export MROOT=$PWD/..; make; cd ../../..
     
 Now be benchmark can be obtained with:
     
