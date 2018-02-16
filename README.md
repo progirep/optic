@@ -1,5 +1,6 @@
 Optic: The Propagation-Optimal CNF Encoder
 ===========================================================================
+(C) by Ruediger Ehlers
 
 Optic is a tool to compute confunctive normal form (CNF) encodings of Boolean constraints. If you have questions, please leave a note under https://github.com/progirep/optic/issues.
 
@@ -11,7 +12,7 @@ Optic is available under GPLv3 license.
 Preparation:
 ------------
 
-The optic tool is written in C++. Before the tool can be used, some libraries need to be downloaded:
+The optic tool is written in C++. Before the tool can be used, some tools/libraries need to be downloaded:
 
 - The CUDD decision diagram library by [Fabio Somenzi](http://vlsi.colorado.edu/~fabio/), version 3.0
 - The SAT solver [lingeling](http://fmv.jku.at/lingeling/) by Armin Biere
@@ -88,7 +89,38 @@ The experiments can now be run with:
     
     cd benchmarks; make; cd ..
     
-If multiple processor cores and more than 8 GB of RAM per core is available, the computation time can be decreased by running `make -j`(number of processor cores) instead. 
+If multiple processor cores and more than 8 GB of RAM per core is available, the computation time can be decreased by running `make -j<number of processor cores>` in the benchmarks folder instead. 
 
 At the end of the computation, the file "benchmarks/table.pdf" contains the overall result table, and "benchmarks/tableshort.pdf" the short result table.
 
+
+Running the integer factoring case study
+----------------------------------------
+
+As preparation, we need a python library for prime number testing.
+
+    cd casestudies/factoring; wget https://raw.githubusercontent.com/CamDavidsonPilon/projecteuler-utils/70491a136f033051b61c4f4cc21c639cd35abf69/primality_tests.py -O prime_test.py; cd ../..
+
+The addition and multiplication CNF encodings are already in the folders `casestudies/factoring/blocks<something>`, where the 4-bit full adder in the (3,3) case may not have a minimal number of clauses.
+    
+The following command then generates some benchmarks:
+
+    cd casestudies/factoring; ./generate_benchmarks.py; cd ../..
+    cd casestudies/factoring; ./make_benchmark_makefile.py; cd ../..
+    
+If exactly the composite numbers from the paper are to be used, the first character of the line
+
+    # products = [90115705646749,87794528125921,421926227,189760523]
+
+in the file `casestudies/factoring/generate_benchmarks.py` needs to be removed (so that no new products of random primes numbers are used).
+
+Before running the benchmarks, we need to compile lingeling and download and compile MapleSAT as solvers:
+
+    cd lib/lingeling-bbc-9230380-160707; ./configure.sh; make; cd ../..
+    cd lib; wget .../MapleCOMSPS_LRB.zip; unzip MapleCOMSPS_LRB.zip; cd MapleCOMSPS_LRB/core; export MROOT=$PWD/..; make; cd ../../..
+    
+Now be benchmark can be obtained with:
+    
+    cd casestudies/factoring; make -j<number of processor cores>; cd ../..
+
+This will generate the plot file `casestudies/factoring/summary.pdf` with the cactus plot.
