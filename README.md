@@ -124,3 +124,25 @@ Now be benchmark can be obtained with:
     cd casestudies/factoring; make -j<number of processor cores>; cd ../..
 
 This will generate the plot file `casestudies/factoring/summary.pdf` with the cactus plot.
+
+
+Running the stair-shaped Sudoku case study
+------------------------------------------
+As preparation, the SAT solver `picosat` should be in the path. In Ubuntu Linux, this can be made sure with `sudo apt-get install picosat`.
+
+The first step is the generation of some stair-shaped sudokus. This can be done with the following command:
+
+    cd casestudies/sudoku/sudokuBuilder/; ./stairSudokuBuilder.py; cd ../../..
+    
+Afterwards, the CNF problems can be generated (from the Sudokus) as follows:
+
+    cd casestudies/sudoku/satInstanceBuilder; ./builderStair.py ; cd ../../..
+    
+The benchmark Makefile can then be generated with the following command:
+
+    cd casestudies/sudoku/satEncodings; ./make_benchmark.py; cd ../../..
+
+The benchmark results can then be computed as follows:
+
+    cd casestudies/sudoku/satEncodings; make -j<number of processor cores>; cd ../..
+
