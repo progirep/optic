@@ -145,4 +145,19 @@ The benchmark Makefile can then be generated with the following command:
 The benchmark results can then be computed as follows:
 
     cd casestudies/sudoku/satEncodings; make -j<number of processor cores>; cd ../..
+    
+This will generate the plot file `casestudies/factoring/summary.pdf` with the cactus plot.
+    
+    
+Running the reverse MD5-hashing case study
+------------------------------------------
+The first step is the generation of the benchmarks. This can be done with the following command:
+
+    cd casestudies/reversehashing; ./compileAll.sh; cd ../..
+    
+The benchmark results can then be computed as follows:
+
+    cd casestudies/reversehashing; make -j<number of processor cores>; cd ../..
+    
+This will generate the plot file `casestudies/reversehashing/summary.pdf` with the cactus plot.
 

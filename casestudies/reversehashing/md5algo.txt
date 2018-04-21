@@ -1,0 +1,895 @@
+#!/usr/bin/python
+
+import math
+
+######################################
+# Worker Functions                   #
+######################################
+
+def fn_fourBytesToInt(a,b,c,d):
+  return int.from_bytes(bytearray([a,b,c,d]), byteorder='little')
+
+def fn_bitwise_md5mixerA(b,c,d):
+  return  b & c | ~b & d
+
+def fn_bitwise_tripleXor(b,c,d):
+  return  b ^ c ^ d
+
+def fn_bitwise_md5mixerB(c,b,d):
+  return  c ^ (b | ~d)
+
+def fn_add_32(a,b):
+  return (a + b) & 0xFFFFFFFF
+
+def fn_leftrotate(a,b):
+  return ((a << b) | (a >> (32-b))) & 0xFFFFFFFF
+
+######################################
+# Start of variable declarations     #
+######################################
+
+#->STARTSSA
+#->SYMBOLICBYTE:message0_0
+message0_0 = 48
+#->SYMBOLICBYTE:message1_0
+message1_0 = 49
+#->SYMBOLICBYTE:message2_0
+message2_0 = 50
+#->SYMBOLICBYTE:message3_0
+message3_0 = 51
+#->SYMBOLICBYTE:message4_0
+message4_0 = 52
+#->SYMBOLICBYTE:message5_0
+message5_0 = 53
+#->SYMBOLICBYTE:message6_0
+message6_0 = 54
+#->SYMBOLICBYTE:message7_0
+message7_0 = 55
+#->SYMBOLICBYTE:message8_0
+message8_0 = 56
+#->SYMBOLICBYTE:message9_0
+message9_0 = 57
+#->SYMBOLICBYTE:message10_0
+message10_0 = 65
+#->SYMBOLICBYTE:message11_0
+message11_0 = 66
+#->SYMBOLICBYTE:message12_0
+message12_0 = 67
+#->SYMBOLICBYTE:message13_0
+message13_0 = 68
+#->SYMBOLICBYTE:message14_0
+message14_0 = 69
+#->SYMBOLICBYTE:message15_0
+message15_0 = 70
+#->SYMBOLICBYTE:message16_0
+message16_0 = 48
+#->SYMBOLICBYTE:message17_0
+message17_0 = 49
+#->SYMBOLICBYTE:message18_0
+message18_0 = 50
+#->SYMBOLICBYTE:message19_0
+message19_0 = 51
+#->SYMBOLICBYTE:message20_0
+message20_0 = 52
+#->SYMBOLICBYTE:message21_0
+message21_0 = 53
+#->SYMBOLICBYTE:message22_0
+message22_0 = 54
+#->SYMBOLICBYTE:message23_0
+message23_0 = 55
+#->SYMBOLICBYTE:message24_0
+message24_0 = 56
+#->SYMBOLICBYTE:message25_0
+message25_0 = 57
+#->SYMBOLICBYTE:message26_0
+message26_0 = 65
+#->SYMBOLICBYTE:message27_0
+message27_0 = 66
+#->SYMBOLICBYTE:message28_0
+message28_0 = 67
+#->SYMBOLICBYTE:message29_0
+message29_0 = 68
+#->SYMBOLICBYTE:message30_0
+message30_0 = 69
+#->SYMBOLICBYTE:message31_0
+message31_0 = 70
+#Pre-processing: adding a single 1 bit
+message32_0 = 0x80
+#Pre-processing: padding with zeros (the message must have less than 55 bytes)
+message33_0 = 0
+message34_0 = 0
+message35_0 = 0
+message36_0 = 0
+message37_0 = 0
+message38_0 = 0
+message39_0 = 0
+message40_0 = 0
+message41_0 = 0
+message42_0 = 0
+message43_0 = 0
+message44_0 = 0
+message45_0 = 0
+message46_0 = 0
+message47_0 = 0
+message48_0 = 0
+message49_0 = 0
+message50_0 = 0
+message51_0 = 0
+message52_0 = 0
+message53_0 = 0
+message54_0 = 0
+message55_0 = 0
+#append original length in bits mod (2 pow 64) to message
+message56_0 = 0
+message57_0 = 1
+message58_0 = 0
+message59_0 = 0
+message60_0 = 0
+message61_0 = 0
+message62_0 = 0
+message63_0 = 0
+#K Table
+K0_0 = 3614090360
+K1_0 = 3905402710
+K2_0 = 606105819
+K3_0 = 3250441966
+K4_0 = 4118548399
+K5_0 = 1200080426
+K6_0 = 2821735955
+K7_0 = 4249261313
+K8_0 = 1770035416
+K9_0 = 2336552879
+K10_0 = 4294925233
+K11_0 = 2304563134
+K12_0 = 1804603682
+K13_0 = 4254626195
+K14_0 = 2792965006
+K15_0 = 1236535329
+K16_0 = 4129170786
+K17_0 = 3225465664
+K18_0 = 643717713
+K19_0 = 3921069994
+K20_0 = 3593408605
+K21_0 = 38016083
+K22_0 = 3634488961
+K23_0 = 3889429448
+K24_0 = 568446438
+K25_0 = 3275163606
+K26_0 = 4107603335
+K27_0 = 1163531501
+K28_0 = 2850285829
+K29_0 = 4243563512
+K30_0 = 1735328473
+K31_0 = 2368359562
+K32_0 = 4294588738
+K33_0 = 2272392833
+K34_0 = 1839030562
+K35_0 = 4259657740
+K36_0 = 2763975236
+K37_0 = 1272893353
+K38_0 = 4139469664
+K39_0 = 3200236656
+K40_0 = 681279174
+K41_0 = 3936430074
+K42_0 = 3572445317
+K43_0 = 76029189
+K44_0 = 3654602809
+K45_0 = 3873151461
+K46_0 = 530742520
+K47_0 = 3299628645
+K48_0 = 4096336452
+K49_0 = 1126891415
+K50_0 = 2878612391
+K51_0 = 4237533241
+K52_0 = 1700485571
+K53_0 = 2399980690
+K54_0 = 4293915773
+K55_0 = 2240044497
+K56_0 = 1873313359
+K57_0 = 4264355552
+K58_0 = 2734768916
+K59_0 = 1309151649
+K60_0 = 4149444226
+K61_0 = 3174756917
+K62_0 = 718787259
+K63_0 = 3951481745
+#Initialize variables:
+a00 = 0x67452301
+b00 = 0xefcdab89
+c00 = 0x98badcfe
+d00 = 0x10325476
+######################################
+# End of variable declarations       #
+######################################
+#Process the message in successive 512-bit chunks:
+M0_0 = fn_fourBytesToInt(message0_0 , message1_0 , message2_0 , message3_0)
+M1_0 = fn_fourBytesToInt(message4_0 , message5_0 , message6_0 , message7_0)
+M2_0 = fn_fourBytesToInt(message8_0 , message9_0 , message10_0 , message11_0)
+M3_0 = fn_fourBytesToInt(message12_0 , message13_0 , message14_0 , message15_0)
+M4_0 = fn_fourBytesToInt(message16_0 , message17_0 , message18_0 , message19_0)
+M5_0 = fn_fourBytesToInt(message20_0 , message21_0 , message22_0 , message23_0)
+M6_0 = fn_fourBytesToInt(message24_0 , message25_0 , message26_0 , message27_0)
+M7_0 = fn_fourBytesToInt(message28_0 , message29_0 , message30_0 , message31_0)
+M8_0 = fn_fourBytesToInt(message32_0 , message33_0 , message34_0 , message35_0)
+M9_0 = fn_fourBytesToInt(message36_0 , message37_0 , message38_0 , message39_0)
+M10_0 = fn_fourBytesToInt(message40_0 , message41_0 , message42_0 , message43_0)
+M11_0 = fn_fourBytesToInt(message44_0 , message45_0 , message46_0 , message47_0)
+M12_0 = fn_fourBytesToInt(message48_0 , message49_0 , message50_0 , message51_0)
+M13_0 = fn_fourBytesToInt(message52_0 , message53_0 , message54_0 , message55_0)
+M14_0 = fn_fourBytesToInt(message56_0 , message57_0 , message58_0 , message59_0)
+M15_0 = fn_fourBytesToInt(message60_0 , message61_0 , message62_0 , message63_0)
+#Initialize hash value for this chunk:
+A0 = a00
+B0 = b00
+C0 = c00
+D0 = d00
+F0 = fn_bitwise_md5mixerA(B0,C0,D0)
+dTemp0 = D0
+D1 = C0
+C1 = B0
+mytmpA0 = fn_add_32(A0,F0)
+mytmpA1 = fn_add_32(mytmpA0,K0_0)
+mytmp0 = fn_add_32(mytmpA1,M0_0)
+myrot0 = fn_leftrotate(mytmp0,7)
+B1 = fn_add_32(B0,myrot0)
+A1 = dTemp0
+F1 = fn_bitwise_md5mixerA(B1,C1,D1)
+dTemp1 = D1
+D2 = C1
+C2 = B1
+mytmpA2 = fn_add_32(A1,F1)
+mytmpA3 = fn_add_32(mytmpA2,K1_0)
+mytmp1 = fn_add_32(mytmpA3,M1_0)
+myrot1 = fn_leftrotate(mytmp1,12)
+B2 = fn_add_32(B1,myrot1)
+A2 = dTemp1
+F2 = fn_bitwise_md5mixerA(B2,C2,D2)
+dTemp2 = D2
+D3 = C2
+C3 = B2
+mytmpA4 = fn_add_32(A2,F2)
+mytmpA5 = fn_add_32(mytmpA4,K2_0)
+mytmp2 = fn_add_32(mytmpA5,M2_0)
+myrot2 = fn_leftrotate(mytmp2,17)
+B3 = fn_add_32(B2,myrot2)
+A3 = dTemp2
+F3 = fn_bitwise_md5mixerA(B3,C3,D3)
+dTemp3 = D3
+D4 = C3
+C4 = B3
+mytmpA6 = fn_add_32(A3,F3)
+mytmpA7 = fn_add_32(mytmpA6,K3_0)
+mytmp3 = fn_add_32(mytmpA7,M3_0)
+myrot3 = fn_leftrotate(mytmp3,22)
+B4 = fn_add_32(B3,myrot3)
+A4 = dTemp3
+F4 = fn_bitwise_md5mixerA(B4,C4,D4)
+dTemp4 = D4
+D5 = C4
+C5 = B4
+mytmpA8 = fn_add_32(A4,F4)
+mytmpA9 = fn_add_32(mytmpA8,K4_0)
+mytmp4 = fn_add_32(mytmpA9,M4_0)
+myrot4 = fn_leftrotate(mytmp4,7)
+B5 = fn_add_32(B4,myrot4)
+A5 = dTemp4
+F5 = fn_bitwise_md5mixerA(B5,C5,D5)
+dTemp5 = D5
+D6 = C5
+C6 = B5
+mytmpA10 = fn_add_32(A5,F5)
+mytmpA11 = fn_add_32(mytmpA10,K5_0)
+mytmp5 = fn_add_32(mytmpA11,M5_0)
+myrot5 = fn_leftrotate(mytmp5,12)
+B6 = fn_add_32(B5,myrot5)
+A6 = dTemp5
+F6 = fn_bitwise_md5mixerA(B6,C6,D6)
+dTemp6 = D6
+D7 = C6
+C7 = B6
+mytmpA12 = fn_add_32(A6,F6)
+mytmpA13 = fn_add_32(mytmpA12,K6_0)
+mytmp6 = fn_add_32(mytmpA13,M6_0)
+myrot6 = fn_leftrotate(mytmp6,17)
+B7 = fn_add_32(B6,myrot6)
+A7 = dTemp6
+F7 = fn_bitwise_md5mixerA(B7,C7,D7)
+dTemp7 = D7
+D8 = C7
+C8 = B7
+mytmpA14 = fn_add_32(A7,F7)
+mytmpA15 = fn_add_32(mytmpA14,K7_0)
+mytmp7 = fn_add_32(mytmpA15,M7_0)
+myrot7 = fn_leftrotate(mytmp7,22)
+B8 = fn_add_32(B7,myrot7)
+A8 = dTemp7
+F8 = fn_bitwise_md5mixerA(B8,C8,D8)
+dTemp8 = D8
+D9 = C8
+C9 = B8
+mytmpA16 = fn_add_32(A8,F8)
+mytmpA17 = fn_add_32(mytmpA16,K8_0)
+mytmp8 = fn_add_32(mytmpA17,M8_0)
+myrot8 = fn_leftrotate(mytmp8,7)
+B9 = fn_add_32(B8,myrot8)
+A9 = dTemp8
+F9 = fn_bitwise_md5mixerA(B9,C9,D9)
+dTemp9 = D9
+D10 = C9
+C10 = B9
+mytmpA18 = fn_add_32(A9,F9)
+mytmpA19 = fn_add_32(mytmpA18,K9_0)
+mytmp9 = fn_add_32(mytmpA19,M9_0)
+myrot9 = fn_leftrotate(mytmp9,12)
+B10 = fn_add_32(B9,myrot9)
+A10 = dTemp9
+F10 = fn_bitwise_md5mixerA(B10,C10,D10)
+dTemp10 = D10
+D11 = C10
+C11 = B10
+mytmpA20 = fn_add_32(A10,F10)
+mytmpA21 = fn_add_32(mytmpA20,K10_0)
+mytmp10 = fn_add_32(mytmpA21,M10_0)
+myrot10 = fn_leftrotate(mytmp10,17)
+B11 = fn_add_32(B10,myrot10)
+A11 = dTemp10
+F11 = fn_bitwise_md5mixerA(B11,C11,D11)
+dTemp11 = D11
+D12 = C11
+C12 = B11
+mytmpA22 = fn_add_32(A11,F11)
+mytmpA23 = fn_add_32(mytmpA22,K11_0)
+mytmp11 = fn_add_32(mytmpA23,M11_0)
+myrot11 = fn_leftrotate(mytmp11,22)
+B12 = fn_add_32(B11,myrot11)
+A12 = dTemp11
+F12 = fn_bitwise_md5mixerA(B12,C12,D12)
+dTemp12 = D12
+D13 = C12
+C13 = B12
+mytmpA24 = fn_add_32(A12,F12)
+mytmpA25 = fn_add_32(mytmpA24,K12_0)
+mytmp12 = fn_add_32(mytmpA25,M12_0)
+myrot12 = fn_leftrotate(mytmp12,7)
+B13 = fn_add_32(B12,myrot12)
+A13 = dTemp12
+F13 = fn_bitwise_md5mixerA(B13,C13,D13)
+dTemp13 = D13
+D14 = C13
+C14 = B13
+mytmpA26 = fn_add_32(A13,F13)
+mytmpA27 = fn_add_32(mytmpA26,K13_0)
+mytmp13 = fn_add_32(mytmpA27,M13_0)
+myrot13 = fn_leftrotate(mytmp13,12)
+B14 = fn_add_32(B13,myrot13)
+A14 = dTemp13
+F14 = fn_bitwise_md5mixerA(B14,C14,D14)
+dTemp14 = D14
+D15 = C14
+C15 = B14
+mytmpA28 = fn_add_32(A14,F14)
+mytmpA29 = fn_add_32(mytmpA28,K14_0)
+mytmp14 = fn_add_32(mytmpA29,M14_0)
+myrot14 = fn_leftrotate(mytmp14,17)
+B15 = fn_add_32(B14,myrot14)
+A15 = dTemp14
+F15 = fn_bitwise_md5mixerA(B15,C15,D15)
+dTemp15 = D15
+D16 = C15
+C16 = B15
+mytmpA30 = fn_add_32(A15,F15)
+mytmpA31 = fn_add_32(mytmpA30,K15_0)
+mytmp15 = fn_add_32(mytmpA31,M15_0)
+myrot15 = fn_leftrotate(mytmp15,22)
+B16 = fn_add_32(B15,myrot15)
+A16 = dTemp15
+F16 = fn_bitwise_md5mixerA(D16,B16,C16)
+dTemp16 = D16
+D17 = C16
+C17 = B16
+mytmpA32 = fn_add_32(A16,F16)
+mytmpA33 = fn_add_32(mytmpA32,K16_0)
+mytmp16 = fn_add_32(mytmpA33,M1_0)
+myrot16 = fn_leftrotate(mytmp16,5)
+B17 = fn_add_32(B16,myrot16)
+A17 = dTemp16
+F17 = fn_bitwise_md5mixerA(D17,B17,C17)
+dTemp17 = D17
+D18 = C17
+C18 = B17
+mytmpA34 = fn_add_32(A17,F17)
+mytmpA35 = fn_add_32(mytmpA34,K17_0)
+mytmp17 = fn_add_32(mytmpA35,M6_0)
+myrot17 = fn_leftrotate(mytmp17,9)
+B18 = fn_add_32(B17,myrot17)
+A18 = dTemp17
+F18 = fn_bitwise_md5mixerA(D18,B18,C18)
+dTemp18 = D18
+D19 = C18
+C19 = B18
+mytmpA36 = fn_add_32(A18,F18)
+mytmpA37 = fn_add_32(mytmpA36,K18_0)
+mytmp18 = fn_add_32(mytmpA37,M11_0)
+myrot18 = fn_leftrotate(mytmp18,14)
+B19 = fn_add_32(B18,myrot18)
+A19 = dTemp18
+F19 = fn_bitwise_md5mixerA(D19,B19,C19)
+dTemp19 = D19
+D20 = C19
+C20 = B19
+mytmpA38 = fn_add_32(A19,F19)
+mytmpA39 = fn_add_32(mytmpA38,K19_0)
+mytmp19 = fn_add_32(mytmpA39,M0_0)
+myrot19 = fn_leftrotate(mytmp19,20)
+B20 = fn_add_32(B19,myrot19)
+A20 = dTemp19
+F20 = fn_bitwise_md5mixerA(D20,B20,C20)
+dTemp20 = D20
+D21 = C20
+C21 = B20
+mytmpA40 = fn_add_32(A20,F20)
+mytmpA41 = fn_add_32(mytmpA40,K20_0)
+mytmp20 = fn_add_32(mytmpA41,M5_0)
+myrot20 = fn_leftrotate(mytmp20,5)
+B21 = fn_add_32(B20,myrot20)
+A21 = dTemp20
+F21 = fn_bitwise_md5mixerA(D21,B21,C21)
+dTemp21 = D21
+D22 = C21
+C22 = B21
+mytmpA42 = fn_add_32(A21,F21)
+mytmpA43 = fn_add_32(mytmpA42,K21_0)
+mytmp21 = fn_add_32(mytmpA43,M10_0)
+myrot21 = fn_leftrotate(mytmp21,9)
+B22 = fn_add_32(B21,myrot21)
+A22 = dTemp21
+F22 = fn_bitwise_md5mixerA(D22,B22,C22)
+dTemp22 = D22
+D23 = C22
+C23 = B22
+mytmpA44 = fn_add_32(A22,F22)
+mytmpA45 = fn_add_32(mytmpA44,K22_0)
+mytmp22 = fn_add_32(mytmpA45,M15_0)
+myrot22 = fn_leftrotate(mytmp22,14)
+B23 = fn_add_32(B22,myrot22)
+A23 = dTemp22
+F23 = fn_bitwise_md5mixerA(D23,B23,C23)
+dTemp23 = D23
+D24 = C23
+C24 = B23
+mytmpA46 = fn_add_32(A23,F23)
+mytmpA47 = fn_add_32(mytmpA46,K23_0)
+mytmp23 = fn_add_32(mytmpA47,M4_0)
+myrot23 = fn_leftrotate(mytmp23,20)
+B24 = fn_add_32(B23,myrot23)
+A24 = dTemp23
+F24 = fn_bitwise_md5mixerA(D24,B24,C24)
+dTemp24 = D24
+D25 = C24
+C25 = B24
+mytmpA48 = fn_add_32(A24,F24)
+mytmpA49 = fn_add_32(mytmpA48,K24_0)
+mytmp24 = fn_add_32(mytmpA49,M9_0)
+myrot24 = fn_leftrotate(mytmp24,5)
+B25 = fn_add_32(B24,myrot24)
+A25 = dTemp24
+F25 = fn_bitwise_md5mixerA(D25,B25,C25)
+dTemp25 = D25
+D26 = C25
+C26 = B25
+mytmpA50 = fn_add_32(A25,F25)
+mytmpA51 = fn_add_32(mytmpA50,K25_0)
+mytmp25 = fn_add_32(mytmpA51,M14_0)
+myrot25 = fn_leftrotate(mytmp25,9)
+B26 = fn_add_32(B25,myrot25)
+A26 = dTemp25
+F26 = fn_bitwise_md5mixerA(D26,B26,C26)
+dTemp26 = D26
+D27 = C26
+C27 = B26
+mytmpA52 = fn_add_32(A26,F26)
+mytmpA53 = fn_add_32(mytmpA52,K26_0)
+mytmp26 = fn_add_32(mytmpA53,M3_0)
+myrot26 = fn_leftrotate(mytmp26,14)
+B27 = fn_add_32(B26,myrot26)
+A27 = dTemp26
+F27 = fn_bitwise_md5mixerA(D27,B27,C27)
+dTemp27 = D27
+D28 = C27
+C28 = B27
+mytmpA54 = fn_add_32(A27,F27)
+mytmpA55 = fn_add_32(mytmpA54,K27_0)
+mytmp27 = fn_add_32(mytmpA55,M8_0)
+myrot27 = fn_leftrotate(mytmp27,20)
+B28 = fn_add_32(B27,myrot27)
+A28 = dTemp27
+F28 = fn_bitwise_md5mixerA(D28,B28,C28)
+dTemp28 = D28
+D29 = C28
+C29 = B28
+mytmpA56 = fn_add_32(A28,F28)
+mytmpA57 = fn_add_32(mytmpA56,K28_0)
+mytmp28 = fn_add_32(mytmpA57,M13_0)
+myrot28 = fn_leftrotate(mytmp28,5)
+B29 = fn_add_32(B28,myrot28)
+A29 = dTemp28
+F29 = fn_bitwise_md5mixerA(D29,B29,C29)
+dTemp29 = D29
+D30 = C29
+C30 = B29
+mytmpA58 = fn_add_32(A29,F29)
+mytmpA59 = fn_add_32(mytmpA58,K29_0)
+mytmp29 = fn_add_32(mytmpA59,M2_0)
+myrot29 = fn_leftrotate(mytmp29,9)
+B30 = fn_add_32(B29,myrot29)
+A30 = dTemp29
+F30 = fn_bitwise_md5mixerA(D30,B30,C30)
+dTemp30 = D30
+D31 = C30
+C31 = B30
+mytmpA60 = fn_add_32(A30,F30)
+mytmpA61 = fn_add_32(mytmpA60,K30_0)
+mytmp30 = fn_add_32(mytmpA61,M7_0)
+myrot30 = fn_leftrotate(mytmp30,14)
+B31 = fn_add_32(B30,myrot30)
+A31 = dTemp30
+F31 = fn_bitwise_md5mixerA(D31,B31,C31)
+dTemp31 = D31
+D32 = C31
+C32 = B31
+mytmpA62 = fn_add_32(A31,F31)
+mytmpA63 = fn_add_32(mytmpA62,K31_0)
+mytmp31 = fn_add_32(mytmpA63,M12_0)
+myrot31 = fn_leftrotate(mytmp31,20)
+B32 = fn_add_32(B31,myrot31)
+A32 = dTemp31
+F32 = fn_bitwise_tripleXor(B32,C32,D32)
+dTemp32 = D32
+D33 = C32
+C33 = B32
+mytmpA64 = fn_add_32(A32,F32)
+mytmpA65 = fn_add_32(mytmpA64,K32_0)
+mytmp32 = fn_add_32(mytmpA65,M5_0)
+myrot32 = fn_leftrotate(mytmp32,4)
+B33 = fn_add_32(B32,myrot32)
+A33 = dTemp32
+F33 = fn_bitwise_tripleXor(B33,C33,D33)
+dTemp33 = D33
+D34 = C33
+C34 = B33
+mytmpA66 = fn_add_32(A33,F33)
+mytmpA67 = fn_add_32(mytmpA66,K33_0)
+mytmp33 = fn_add_32(mytmpA67,M8_0)
+myrot33 = fn_leftrotate(mytmp33,11)
+B34 = fn_add_32(B33,myrot33)
+A34 = dTemp33
+F34 = fn_bitwise_tripleXor(B34,C34,D34)
+dTemp34 = D34
+D35 = C34
+C35 = B34
+mytmpA68 = fn_add_32(A34,F34)
+mytmpA69 = fn_add_32(mytmpA68,K34_0)
+mytmp34 = fn_add_32(mytmpA69,M11_0)
+myrot34 = fn_leftrotate(mytmp34,16)
+B35 = fn_add_32(B34,myrot34)
+A35 = dTemp34
+F35 = fn_bitwise_tripleXor(B35,C35,D35)
+dTemp35 = D35
+D36 = C35
+C36 = B35
+mytmpA70 = fn_add_32(A35,F35)
+mytmpA71 = fn_add_32(mytmpA70,K35_0)
+mytmp35 = fn_add_32(mytmpA71,M14_0)
+myrot35 = fn_leftrotate(mytmp35,23)
+B36 = fn_add_32(B35,myrot35)
+A36 = dTemp35
+F36 = fn_bitwise_tripleXor(B36,C36,D36)
+dTemp36 = D36
+D37 = C36
+C37 = B36
+mytmpA72 = fn_add_32(A36,F36)
+mytmpA73 = fn_add_32(mytmpA72,K36_0)
+mytmp36 = fn_add_32(mytmpA73,M1_0)
+myrot36 = fn_leftrotate(mytmp36,4)
+B37 = fn_add_32(B36,myrot36)
+A37 = dTemp36
+F37 = fn_bitwise_tripleXor(B37,C37,D37)
+dTemp37 = D37
+D38 = C37
+C38 = B37
+mytmpA74 = fn_add_32(A37,F37)
+mytmpA75 = fn_add_32(mytmpA74,K37_0)
+mytmp37 = fn_add_32(mytmpA75,M4_0)
+myrot37 = fn_leftrotate(mytmp37,11)
+B38 = fn_add_32(B37,myrot37)
+A38 = dTemp37
+F38 = fn_bitwise_tripleXor(B38,C38,D38)
+dTemp38 = D38
+D39 = C38
+C39 = B38
+mytmpA76 = fn_add_32(A38,F38)
+mytmpA77 = fn_add_32(mytmpA76,K38_0)
+mytmp38 = fn_add_32(mytmpA77,M7_0)
+myrot38 = fn_leftrotate(mytmp38,16)
+B39 = fn_add_32(B38,myrot38)
+A39 = dTemp38
+F39 = fn_bitwise_tripleXor(B39,C39,D39)
+dTemp39 = D39
+D40 = C39
+C40 = B39
+mytmpA78 = fn_add_32(A39,F39)
+mytmpA79 = fn_add_32(mytmpA78,K39_0)
+mytmp39 = fn_add_32(mytmpA79,M10_0)
+myrot39 = fn_leftrotate(mytmp39,23)
+B40 = fn_add_32(B39,myrot39)
+A40 = dTemp39
+F40 = fn_bitwise_tripleXor(B40,C40,D40)
+dTemp40 = D40
+D41 = C40
+C41 = B40
+mytmpA80 = fn_add_32(A40,F40)
+mytmpA81 = fn_add_32(mytmpA80,K40_0)
+mytmp40 = fn_add_32(mytmpA81,M13_0)
+myrot40 = fn_leftrotate(mytmp40,4)
+B41 = fn_add_32(B40,myrot40)
+A41 = dTemp40
+F41 = fn_bitwise_tripleXor(B41,C41,D41)
+dTemp41 = D41
+D42 = C41
+C42 = B41
+mytmpA82 = fn_add_32(A41,F41)
+mytmpA83 = fn_add_32(mytmpA82,K41_0)
+mytmp41 = fn_add_32(mytmpA83,M0_0)
+myrot41 = fn_leftrotate(mytmp41,11)
+B42 = fn_add_32(B41,myrot41)
+A42 = dTemp41
+F42 = fn_bitwise_tripleXor(B42,C42,D42)
+dTemp42 = D42
+D43 = C42
+C43 = B42
+mytmpA84 = fn_add_32(A42,F42)
+mytmpA85 = fn_add_32(mytmpA84,K42_0)
+mytmp42 = fn_add_32(mytmpA85,M3_0)
+myrot42 = fn_leftrotate(mytmp42,16)
+B43 = fn_add_32(B42,myrot42)
+A43 = dTemp42
+F43 = fn_bitwise_tripleXor(B43,C43,D43)
+dTemp43 = D43
+D44 = C43
+C44 = B43
+mytmpA86 = fn_add_32(A43,F43)
+mytmpA87 = fn_add_32(mytmpA86,K43_0)
+mytmp43 = fn_add_32(mytmpA87,M6_0)
+myrot43 = fn_leftrotate(mytmp43,23)
+B44 = fn_add_32(B43,myrot43)
+A44 = dTemp43
+F44 = fn_bitwise_tripleXor(B44,C44,D44)
+dTemp44 = D44
+D45 = C44
+C45 = B44
+mytmpA88 = fn_add_32(A44,F44)
+mytmpA89 = fn_add_32(mytmpA88,K44_0)
+mytmp44 = fn_add_32(mytmpA89,M9_0)
+myrot44 = fn_leftrotate(mytmp44,4)
+B45 = fn_add_32(B44,myrot44)
+A45 = dTemp44
+F45 = fn_bitwise_tripleXor(B45,C45,D45)
+dTemp45 = D45
+D46 = C45
+C46 = B45
+mytmpA90 = fn_add_32(A45,F45)
+mytmpA91 = fn_add_32(mytmpA90,K45_0)
+mytmp45 = fn_add_32(mytmpA91,M12_0)
+myrot45 = fn_leftrotate(mytmp45,11)
+B46 = fn_add_32(B45,myrot45)
+A46 = dTemp45
+F46 = fn_bitwise_tripleXor(B46,C46,D46)
+dTemp46 = D46
+D47 = C46
+C47 = B46
+mytmpA92 = fn_add_32(A46,F46)
+mytmpA93 = fn_add_32(mytmpA92,K46_0)
+mytmp46 = fn_add_32(mytmpA93,M15_0)
+myrot46 = fn_leftrotate(mytmp46,16)
+B47 = fn_add_32(B46,myrot46)
+A47 = dTemp46
+F47 = fn_bitwise_tripleXor(B47,C47,D47)
+dTemp47 = D47
+D48 = C47
+C48 = B47
+mytmpA94 = fn_add_32(A47,F47)
+mytmpA95 = fn_add_32(mytmpA94,K47_0)
+mytmp47 = fn_add_32(mytmpA95,M2_0)
+myrot47 = fn_leftrotate(mytmp47,23)
+B48 = fn_add_32(B47,myrot47)
+A48 = dTemp47
+F48 = fn_bitwise_md5mixerB(C48,B48,D48)
+dTemp48 = D48
+D49 = C48
+C49 = B48
+mytmpA96 = fn_add_32(A48,F48)
+mytmpA97 = fn_add_32(mytmpA96,K48_0)
+mytmp48 = fn_add_32(mytmpA97,M0_0)
+myrot48 = fn_leftrotate(mytmp48,6)
+B49 = fn_add_32(B48,myrot48)
+A49 = dTemp48
+F49 = fn_bitwise_md5mixerB(C49,B49,D49)
+dTemp49 = D49
+D50 = C49
+C50 = B49
+mytmpA98 = fn_add_32(A49,F49)
+mytmpA99 = fn_add_32(mytmpA98,K49_0)
+mytmp49 = fn_add_32(mytmpA99,M7_0)
+myrot49 = fn_leftrotate(mytmp49,10)
+B50 = fn_add_32(B49,myrot49)
+A50 = dTemp49
+F50 = fn_bitwise_md5mixerB(C50,B50,D50)
+dTemp50 = D50
+D51 = C50
+C51 = B50
+mytmpA100 = fn_add_32(A50,F50)
+mytmpA101 = fn_add_32(mytmpA100,K50_0)
+mytmp50 = fn_add_32(mytmpA101,M14_0)
+myrot50 = fn_leftrotate(mytmp50,15)
+B51 = fn_add_32(B50,myrot50)
+A51 = dTemp50
+F51 = fn_bitwise_md5mixerB(C51,B51,D51)
+dTemp51 = D51
+D52 = C51
+C52 = B51
+mytmpA102 = fn_add_32(A51,F51)
+mytmpA103 = fn_add_32(mytmpA102,K51_0)
+mytmp51 = fn_add_32(mytmpA103,M5_0)
+myrot51 = fn_leftrotate(mytmp51,21)
+B52 = fn_add_32(B51,myrot51)
+A52 = dTemp51
+F52 = fn_bitwise_md5mixerB(C52,B52,D52)
+dTemp52 = D52
+D53 = C52
+C53 = B52
+mytmpA104 = fn_add_32(A52,F52)
+mytmpA105 = fn_add_32(mytmpA104,K52_0)
+mytmp52 = fn_add_32(mytmpA105,M12_0)
+myrot52 = fn_leftrotate(mytmp52,6)
+B53 = fn_add_32(B52,myrot52)
+A53 = dTemp52
+F53 = fn_bitwise_md5mixerB(C53,B53,D53)
+dTemp53 = D53
+D54 = C53
+C54 = B53
+mytmpA106 = fn_add_32(A53,F53)
+mytmpA107 = fn_add_32(mytmpA106,K53_0)
+mytmp53 = fn_add_32(mytmpA107,M3_0)
+myrot53 = fn_leftrotate(mytmp53,10)
+B54 = fn_add_32(B53,myrot53)
+A54 = dTemp53
+F54 = fn_bitwise_md5mixerB(C54,B54,D54)
+dTemp54 = D54
+D55 = C54
+C55 = B54
+mytmpA108 = fn_add_32(A54,F54)
+mytmpA109 = fn_add_32(mytmpA108,K54_0)
+mytmp54 = fn_add_32(mytmpA109,M10_0)
+myrot54 = fn_leftrotate(mytmp54,15)
+B55 = fn_add_32(B54,myrot54)
+A55 = dTemp54
+F55 = fn_bitwise_md5mixerB(C55,B55,D55)
+dTemp55 = D55
+D56 = C55
+C56 = B55
+mytmpA110 = fn_add_32(A55,F55)
+mytmpA111 = fn_add_32(mytmpA110,K55_0)
+mytmp55 = fn_add_32(mytmpA111,M1_0)
+myrot55 = fn_leftrotate(mytmp55,21)
+B56 = fn_add_32(B55,myrot55)
+A56 = dTemp55
+F56 = fn_bitwise_md5mixerB(C56,B56,D56)
+dTemp56 = D56
+D57 = C56
+C57 = B56
+mytmpA112 = fn_add_32(A56,F56)
+mytmpA113 = fn_add_32(mytmpA112,K56_0)
+mytmp56 = fn_add_32(mytmpA113,M8_0)
+myrot56 = fn_leftrotate(mytmp56,6)
+B57 = fn_add_32(B56,myrot56)
+A57 = dTemp56
+F57 = fn_bitwise_md5mixerB(C57,B57,D57)
+dTemp57 = D57
+D58 = C57
+C58 = B57
+mytmpA114 = fn_add_32(A57,F57)
+mytmpA115 = fn_add_32(mytmpA114,K57_0)
+mytmp57 = fn_add_32(mytmpA115,M15_0)
+myrot57 = fn_leftrotate(mytmp57,10)
+B58 = fn_add_32(B57,myrot57)
+A58 = dTemp57
+F58 = fn_bitwise_md5mixerB(C58,B58,D58)
+dTemp58 = D58
+D59 = C58
+C59 = B58
+mytmpA116 = fn_add_32(A58,F58)
+mytmpA117 = fn_add_32(mytmpA116,K58_0)
+mytmp58 = fn_add_32(mytmpA117,M6_0)
+myrot58 = fn_leftrotate(mytmp58,15)
+B59 = fn_add_32(B58,myrot58)
+A59 = dTemp58
+F59 = fn_bitwise_md5mixerB(C59,B59,D59)
+dTemp59 = D59
+D60 = C59
+C60 = B59
+mytmpA118 = fn_add_32(A59,F59)
+mytmpA119 = fn_add_32(mytmpA118,K59_0)
+mytmp59 = fn_add_32(mytmpA119,M13_0)
+myrot59 = fn_leftrotate(mytmp59,21)
+B60 = fn_add_32(B59,myrot59)
+A60 = dTemp59
+F60 = fn_bitwise_md5mixerB(C60,B60,D60)
+dTemp60 = D60
+D61 = C60
+C61 = B60
+mytmpA120 = fn_add_32(A60,F60)
+mytmpA121 = fn_add_32(mytmpA120,K60_0)
+mytmp60 = fn_add_32(mytmpA121,M4_0)
+myrot60 = fn_leftrotate(mytmp60,6)
+B61 = fn_add_32(B60,myrot60)
+A61 = dTemp60
+F61 = fn_bitwise_md5mixerB(C61,B61,D61)
+dTemp61 = D61
+D62 = C61
+C62 = B61
+mytmpA122 = fn_add_32(A61,F61)
+mytmpA123 = fn_add_32(mytmpA122,K61_0)
+mytmp61 = fn_add_32(mytmpA123,M11_0)
+myrot61 = fn_leftrotate(mytmp61,10)
+B62 = fn_add_32(B61,myrot61)
+A62 = dTemp61
+F62 = fn_bitwise_md5mixerB(C62,B62,D62)
+dTemp62 = D62
+D63 = C62
+C63 = B62
+mytmpA124 = fn_add_32(A62,F62)
+mytmpA125 = fn_add_32(mytmpA124,K62_0)
+mytmp62 = fn_add_32(mytmpA125,M2_0)
+myrot62 = fn_leftrotate(mytmp62,15)
+B63 = fn_add_32(B62,myrot62)
+A63 = dTemp62
+F63 = fn_bitwise_md5mixerB(C63,B63,D63)
+dTemp63 = D63
+D64 = C63
+C64 = B63
+mytmpA126 = fn_add_32(A63,F63)
+mytmpA127 = fn_add_32(mytmpA126,K63_0)
+mytmp63 = fn_add_32(mytmpA127,M9_0)
+myrot63 = fn_leftrotate(mytmp63,21)
+B64 = fn_add_32(B63,myrot63)
+A64 = dTemp63
+#Add this chunk's hash to result so far:
+a01 = fn_add_32(a00,A64)
+b01 = fn_add_32(b00,B64)
+c01 = fn_add_32(c00,C64)
+d01 = fn_add_32(d00,D64)
+#->SYMBOLICDWORD: a01
+#->SYMBOLICDWORD: b01
+#->SYMBOLICDWORD: c01
+#->SYMBOLICDWORD: d01
+#->BITFIX: a01 b01 c01 d01 
+#->ENDSSA
+########################################
+# End of main code, now there is some  #
+#  code (which is not in SSA format)   #
+#  which allows to check if everything #
+#  is workign as intented              #
+########################################
+import hashlib
+import sys
+#Open a file which contain the message (which will be translated to binary)
+content_of_message = "0123456789ABCDEF0123456789ABCDEF"
+hash_pieces = [a01,b01,c01,d01]
+digest_raw = sum(x<<(32*i) for i, x in enumerate(hash_pieces)).to_bytes(16, byteorder='little')
+digest = '{:032x}'.format(int.from_bytes(digest_raw, byteorder='big'))
+print('-Result after MD5 has been applied: ')
+print(digest)
+print('-For testing purposes, let us try the official python version of MD5: ')
+m = hashlib.md5()
+m.update(content_of_message.encode('utf-8'))
+print(m.hexdigest())

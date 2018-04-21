@@ -1,0 +1,7 @@
+var c
+var b
+var d
+var e
+encode = e <-> (c ^ (b | !d))
+
+

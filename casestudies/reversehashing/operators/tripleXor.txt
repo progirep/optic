@@ -1,0 +1,5 @@
+var b
+var c
+var d
+var e
+encode = e <-> (b ^ c ^ d)
