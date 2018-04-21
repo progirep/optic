@@ -30,15 +30,16 @@ for j in BIT_WIDTHS:
         while not prime_test.is_probably_prime(valueB):
             valueB = random.getrandbits(j)+3
         products.append(valueA*valueB)
-        
-# products = [90115705646749,87794528125921,421926227,189760523]
+
+# Deterministic version for the paper        
+products = [189760523,87794528125921,421926227,90115705646749]
 products.sort()
 print("Random numbers:")
 for a in products:
     print("- "+str(a))
     
     
-for blockType in ["OP","Minimal","33","9999"]:
+for blockType in ["OP","Minimal","33","9999","Greedy"]:
     # ===============================
     # Define Blocks
     # ===============================

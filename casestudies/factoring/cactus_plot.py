@@ -3,18 +3,26 @@ import os, glob, sys, math
 
 # Settings
 # 
-PAINTSTYLES = ["color=blue,thick","color=black!50!white,thick","color=red,dashed,thick","color=green!70!black,dotted,thick","color=yellow!60!black","color=red!50!blue","color=green!50!blue","color=green!50!red,thick","color=brown,thick"]
+
+#d7191c
+#fdae61
+#ffffbf
+#abdda4
+#2b83ba
+
+
+PAINTSTYLES = ["color=plotColor1,thick","color=plotColor1,semithick,densely dashed","color=plotColor2,thick","color=plotColor2,semithick,densely dashed","color=plotColor3,thick","color=plotColor3,semithick,densely dashed","color=plotColor4,thick","color=plotColor4,semithick,densely dashed","color=plotColor5,thick","color=plotColor5,semithick,densely dashed"]
 
 # PAINTSTYLES = ["black,solid", "black,dotted", "black,densely dotted", "black,dashed", "black,densely dashed", "black,dashdotted", "black,densely dashdotted", "thick,solid"] #"black,dasdotdotted",
 
-
-VARIANTS = ["Minimal.cnflingeling","Minimal.cnfmapleSat","OP.cnflingeling","OP.cnfmapleSat","9999.cnflingeling","9999.cnfmapleSat","33.cnflingeling","33.cnfmapleSat"]
+VARIANTS = ["Minimal.cnflingeling","Minimal.cnfmapleSat","OP.cnflingeling","OP.cnfmapleSat","9999.cnflingeling","9999.cnfmapleSat","33.cnflingeling","33.cnfmapleSat","Greedy.cnflingeling","Greedy.cnfmapleSat"]
 WIDTH = 22
 HEIGHT = 9
 MAX_TIME = 1800
 OVERSHOOT=0.2
-NOF_FILES_TICK = 50
-MIN_TIME = 0.08
+NOF_FILES_TICK = 10
+MIN_TIME = 0.1
+MIN_FILES = 20
 TIME_AXIS_MARKS = [0.1,1,5,10,100,600,1800]
 
 # Time axis computation
@@ -50,6 +58,15 @@ with open("summary.tex","w") as outFile:
     print >>outFile,"\\usepackage[left=1cm,right=1cm,top=2cm,bottom=2cm]{geometry}"
     print >>outFile,"\\usepackage{pgfplots}"
     print >>outFile,"\\title{Version comparison of reluv2}"
+    
+    
+    # Color def
+    print >>outFile,"\\definecolor{plotColor1}{RGB}{215,25,28}"
+    print >>outFile,"\\definecolor{plotColor2}{RGB}{253,174,97}"
+    print >>outFile,"\\definecolor{plotColor3}{RGB}{225,225,161}"
+    print >>outFile,"\\definecolor{plotColor4}{RGB}{131,221,164}"
+    print >>outFile,"\\definecolor{plotColor5}{RGB}{43,131,186}"
+   
     print >>outFile,"\\begin{document}"
     print >>outFile,"\\maketitle"
 
@@ -57,7 +74,7 @@ with open("summary.tex","w") as outFile:
     print >>outFile,"\\subsection*{Legend}"
     print >>outFile,"\\begin{tikzpicture}"
     for i, a in enumerate(performances):
-        print >>outFile, "\\draw["+PAINTSTYLES[i]+"] (0,",i*0.8,") -- +(2,0) node[anchor=west,color=black] {"+a+"};"
+        print >>outFile, "\\draw["+PAINTSTYLES[VARIANTS.index(a)]+"] (0,",i*0.8,") -- +(2,0) node[anchor=west,color=black] {"+a+"};"
     print >>outFile,"\\end{tikzpicture}"        
     
     # Print cactus plot
@@ -69,8 +86,11 @@ with open("summary.tex","w") as outFile:
     print >>outFile,"\\draw[dashed] (",WIDTH,",0) -- +(0,",HEIGHT,");"
     print >>outFile,"\\draw[dashed] (0,",HEIGHT,") -- +(",WIDTH,",0);"
     # -> Nof files tick
-    for i in range(NOF_FILES_TICK,totalNofFiles+1,NOF_FILES_TICK):
-        pos = (HEIGHT/float(totalNofFiles))*i
+    startingTick = NOF_FILES_TICK
+    while startingTick < MIN_FILES:
+        startingTick += NOF_FILES_TICK
+    for i in range(startingTick,totalNofFiles+1,NOF_FILES_TICK):
+        pos = (HEIGHT/float(totalNofFiles-MIN_FILES))*(i-MIN_FILES)
         print >>outFile,"\\draw[semithick] (0.1,",pos,") -- +(-0.2,0) node[anchor=east] {\small "+str(i)+"};"
     # -> Time tick
     for i in TIME_AXIS_MARKS:
@@ -79,14 +99,14 @@ with open("summary.tex","w") as outFile:
     # -> Cactus plot
     for i,filename in enumerate(performances):
         allTimes = performances[filename]
-        style = PAINTSTYLES[i]
+        style = PAINTSTYLES[VARIANTS.index(filename)]
         allTimes.sort()
         print >>outFile,"\\draw["+style+"] (0,0)",
         nofFilesSoFar = 0
         for t in allTimes:
             nofFilesSoFar += 1
             xPos = timeToXCoordinate(t)
-            yPos = (HEIGHT/float(totalNofFiles))*nofFilesSoFar
+            yPos = max(0.0,(HEIGHT/float(totalNofFiles-MIN_FILES))*(nofFilesSoFar-MIN_FILES))
             print >>outFile,"-| (",xPos,",",yPos,")",
         print >>outFile,";"
     print >>outFile,"\\end{tikzpicture}\n\n"        

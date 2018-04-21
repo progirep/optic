@@ -422,7 +422,7 @@ def optimallyPropagatingEncoding(variableGroups):
 
 
 # Testing
-ENCODINGS = [("_minimalPlusRow.cnf",lambda x: minimalSizeEncoding(x,True)),("_minimal.cnf",lambda x: minimalSizeEncoding(x,False)),("optimal.cnf",optimallyPropagatingEncoding),("approxapprox2.cnf",lambda x: approximatelyApproximatelyOptimallyPropagatingEncoding(x,2)),("approxapprox3.cnf",lambda x: approximatelyApproximatelyOptimallyPropagatingEncoding(x,3))]
+ENCODINGS = [("_minimal.cnf",lambda x: minimalSizeEncoding(x,False)),("optimal.cnf",optimallyPropagatingEncoding),("approxapprox2.cnf",lambda x: approximatelyApproximatelyOptimallyPropagatingEncoding(x,2)),("approxapprox3.cnf",lambda x: approximatelyApproximatelyOptimallyPropagatingEncoding(x,3))]
 
 if __name__ == '__main__':
 
