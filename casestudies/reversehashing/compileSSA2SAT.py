@@ -33,10 +33,11 @@ varNamesOutput = None
 clauses = [[1]]
 
 # Parse command line input: directory with bitwise implementations.
-if len(sys.argv)<2:
-    print("Error: Need as parameter the directory with the CNF encodings of the operators.",file=sys.stderr)
+if len(sys.argv)<3:
+    print("Error: Need as parameter the directory with the CNF encodings of the operators and the number to be encoded.",file=sys.stderr)
     sys.exit(1)
 cnfDir = sys.argv[1]
+numberToBeEncoded = int(sys.argv[2])
 
 # Parse input file
 # All variables are 32-bit int by default!
@@ -279,7 +280,7 @@ for a in varNamesOutput:
     overallOutputBits += ssaVars[a]
     
 for nofFixedBits in range(0,25):
-    with open("reverse_hash_"+str(cnfDir)+"_"+str(nofFixedBits)+".cnf","w") as outputFile:
+    with open("reverse_hash"+str(numberToBeEncoded)+"_"+str(cnfDir)+"_"+str(nofFixedBits)+".cnf","w") as outputFile:
     
         # Count clauses (without comments)
         realNofClauses = 0
@@ -320,7 +321,10 @@ for nofFixedBits in range(0,25):
         for clause in filteredClauses:
             outputFile.write(" ".join([str(a) for a in clause if a!=-1])+" 0\n")
         for i in range(0,nofFixedBits):
-            outputFile.write(str(-1*overallOutputBits[i])+" 0\n")
+            if ((1 << i) & numberToBeEncoded) > 0:
+                outputFile.write(str(overallOutputBits[i])+" 0\n")
+            else:
+                outputFile.write(str(-1*overallOutputBits[i])+" 0\n")
             
         # Old: Fix input. Need to add 256 to the length of the input in this case.
         # for a in symbolicInputSSAVars:

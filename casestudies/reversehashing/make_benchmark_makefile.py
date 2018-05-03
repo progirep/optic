@@ -2,7 +2,7 @@
 import sys, os, glob, random
 
 # Solver selection
-SOLVERS = [("lingeling","../../lib/lingeling-bbc-9230380-160707/lingeling"),("mapleSat","../../lib/MapleCOMSPS_LRB/core/minisat")]
+SOLVERS = [("lingeling","../../lib/lingeling-bbc-9230380-160707/lingeling"),("mapleSat","../../lib/MapleCOMSPS_LRB/core/minisat"),("minisat","../../lib/minisat/simp/minisat"),("picosat","../../lib/picosat-965/picosat")]
 
 
 # Find all benchmarks

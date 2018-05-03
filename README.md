@@ -25,6 +25,8 @@ All of them can be obtained using the following command sequence (tested on Ubun
     cd lib; wget http://fmv.jku.at/lingeling/lingeling-bbc-9230380-160707.tar.gz; tar -xvzf lingeling-bbc-9230380-160707.tar.gz; cd ..
     cd lib; git clone https://github.com/sat-group/genpce; cd genpce; git checkout 87cf2949ff360af1431d8b4ae09ad4018a8abe80; cd ../..
     cd tools; wget https://raw.githubusercontent.com/pshved/timeout/edb59c93c167c15ede5ccc2795e1abee25ebf9b4/timeout; chmod +x timeout; cd ..
+    cd lib; wget http://minisat.se/downloads/minisat-2.2.0.tar.gz; tar -xvzf minisat-2.2.0.tar.gz; cd ..
+    cd lib; wget http://fmv.jku.at/picosat/picosat-965.tar.gz; tar -xvzf picosat-965.tar.gz; cd ..
 
 Please also visit the home pages of these tools.
 
@@ -151,13 +153,20 @@ This will generate the plot file `casestudies/factoring/summary.pdf` with the ca
     
 Running the reverse MD5-hashing case study
 ------------------------------------------
-The first step is the generation of the benchmarks. This can be done with the following command:
+The very first step is to compile minisat and picosat. This can be done with the following commands:
 
-    cd casestudies/reversehashing; ./compileAll.sh; cd ../..
+    cd lib/minisat/simp; MROOT=$PWD/.. make; cd ../../..
+    cd lib/picosat-965; ./configure.sh; make; cd ../..
+
+The next step is the generation of the benchmarks. This can be done with the following command (for target hash values in 0...3):
+
+    cd casestudies/reversehashing; ./compileAll.sh NUMBER; cd ../..
     
 The benchmark results can then be computed as follows:
 
     cd casestudies/reversehashing; make -j<number of processor cores>; cd ../..
     
-This will generate the plot file `casestudies/reversehashing/summary.pdf` with the cactus plot.
+Generating the benchmarks and running "make" needs to be repeated 4 times for different hash value outputs. 
+
+After the process is complete, the plot file `casestudies/reversehashing/summary.pdf` will contain performance graphs for all four solvers. Note that when not repeating the process 4 times for different hash values, the computation times for the other runs will be assumed to be 1800 seconds (which is the timeout).
 
