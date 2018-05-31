@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 import os, glob, sys
 
-SOLVERS = [("lingeling","../../../lib/lingeling-bbc-9230380-160707/lingeling"),("mapleSat","../../../lib/MapleCOMSPS_LRB/core/minisat")]
+SOLVERS = [("lingeling","../../../lib/lingeling-bbc-9230380-160707/lingeling"),("mapleSat","../../../lib/MapleCOMSPS_LRB/core/minisat"),("minisat","../../../lib/minisat/simp/minisat"),("picosat","../../../lib/picosat-965/picosat")]
 
 allCNFFiles = glob.glob("*.cnf")
 allOutputFiles = []

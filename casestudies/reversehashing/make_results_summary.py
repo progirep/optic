@@ -5,11 +5,11 @@ import sys, glob, os, math
 VARIANTS = ["199OPs","299OPs","399OPs","991OPs","9999OPs","GreedyOPs"]
 COLORS = ["red","blue","green!50!black","orange","black","red!50!blue"]
 MAX_TIME = 2100 # For drawing
-TIME_LIMIT = 1800
+TIME_LIMIT = 1800.0
 TIME_STEPS_DRAW = [0.1,1,10,100,1000,1800]
 IMAGE_HEIGHT = 8.2
 SOLVERVARIANTS = [("mapleSat","MapleSAT"),("lingeling","Lingeling"),("picosat","Picosat"),("minisat","Minisat")]
-MAX_RESULTING_HASH = 4 # 
+MAX_RESULTING_HASH = 4
 
 def timeLogConverter(thetime):
     if (thetime)<0.05:
@@ -20,7 +20,7 @@ allBenchmarkFiles = glob.glob(".res/*.stderr")
 allBenchmarkParts = [a.split("_") for a in allBenchmarkFiles]
 allNumbers = set([])
 for a in allBenchmarkParts:
-    if a[0:2]==['.res/reverse', 'hash']:
+    if a[0]=='.res/reverse' and a[1].startswith('hash'):
         allNumbers.add(int(a[-1].split(".")[0]))
         
 print("\\documentclass[halfparskip]{scrartcl}")
@@ -68,12 +68,12 @@ for (solvername,solverTeXName) in SOLVERVARIANTS:
             isSAT = {}
             for variant in VARIANTS:
                 for i in range(minNofBits,maxNofBits+1):
-                
+
+                    thisTime = []
                     for fileNum in range(0,MAX_RESULTING_HASH):
-                        thisFilename = ".res/reverse_hash_"+encodingName+"_"+str(i)+".cnf"+solvername+".stderr"
-                        thisFilenameResult = ".res/reverse_hash_"+encodingName+"_"+str(i)+".txt"
+                        thisFilename = ".res/reverse_hash"+str(fileNum)+"_"+encodingName+"_"+str(i)+".cnf"+solvername+".stderr"
+                        thisFilenameResult = ".res/reverse_hash"+str(fileNum)+"_"+encodingName+"_"+str(i)+".txt"
                         # print(thisFilenameResult)
-                        thisTime = []
                         try:
                             with open(thisFilename,"r") as dataFile:
                                 for line in dataFile:

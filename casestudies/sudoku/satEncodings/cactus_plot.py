@@ -3,17 +3,19 @@ import os, glob, sys, math
 
 # Settings
 # 
-PAINTSTYLES = ["color=plotColor1,thick","color=plotColor1,semithick,densely dashed","color=plotColor2,thick","color=plotColor2,semithick,densely dashed","color=plotColor3,thick","color=plotColor3,semithick,densely dashed","color=plotColor4,thick","color=plotColor4,semithick,densely dashed","color=plotColor5,thick","color=plotColor5,semithick,densely dashed"]
-VARIANTS = ["minimal.cnf.lingeling","minimal.cnf.mapleSat","optimal.cnf.lingeling","optimal.cnf.mapleSat","approxapprox2.cnf.lingeling","approxapprox2.cnf.mapleSat","approxapprox3.cnf.lingeling","approxapprox3.cnf.mapleSat"]
-VARIANT_GROUPS = [["minimal.cnf.lingeling","minimal.cnf.mapleSat"],["optimal.cnf.lingeling","optimal.cnf.mapleSat"],["approxapprox2.cnf.lingeling","approxapprox2.cnf.mapleSat"],["approxapprox3.cnf.lingeling","approxapprox3.cnf.mapleSat"]]
+VARIANTS = ["minimal.cnf.lingeling","minimal.cnf.mapleSat","minimal.cnf.minisat","minimal.cnf.picosat","optimal.cnf.lingeling","optimal.cnf.mapleSat","optimal.cnf.picosat","optimal.cnf.minisat","approxapprox2.cnf.lingeling","approxapprox2.cnf.picosat","approxapprox2.cnf.minisat","approxapprox2.cnf.mapleSat","approxapprox3.cnf.lingeling","approxapprox3.cnf.picosat","approxapprox3.cnf.minisat","approxapprox3.cnf.mapleSat"]
+VARIANT_GROUPS = [ ["minimal.cnf.lingeling","optimal.cnf.lingeling","approxapprox2.cnf.lingeling","approxapprox3.cnf.lingeling"],
+["minimal.cnf.mapleSat","optimal.cnf.mapleSat","approxapprox2.cnf.mapleSat","approxapprox3.cnf.mapleSat"],
+["minimal.cnf.picosat","optimal.cnf.picosat","approxapprox2.cnf.picosat","approxapprox3.cnf.picosat"],
+["minimal.cnf.minisat","optimal.cnf.minisat","approxapprox2.cnf.minisat","approxapprox3.cnf.minisat"]]
 
 WIDTH = 21
 HEIGHT = 10
-MAX_TIME = 50
+MAX_TIME = 120
 OVERSHOOT=0.2
-NOF_FILES_TICK = 50
-MIN_TIME = 0.1
-TIME_AXIS_MARKS = [0.1,1,5,10,40]
+NOF_FILES_TICK = 10
+MIN_TIME = 3
+TIME_AXIS_MARKS = [3,5,10,30,60,120]
 
 # Time axis computation
 def timeToXCoordinate(time):
@@ -39,9 +41,12 @@ for inFile in performanceFiles:
                         found = True
                 print(inFile)
                 sys.stdout.flush()
-                assert found
+                if not found:
+                    print >>sys.stderr, "Found no time in: ", inFile
+                    assert found
                 
-print performances
+for (a,b) in performances.iteritems():
+    print >>sys.stderr, "Nof Files ",a, ":\t",len(b)
                 
 # Write cactus plot   
 with open("summary.tex","w") as outFile:    
@@ -67,29 +72,97 @@ with open("summary.tex","w") as outFile:
 
     # Print legend
     print >>outFile,"\\subsection*{Legend}"
-    print >>outFile,"\\begin{tikzpicture}"
-    for i, a in enumerate(performances):
-        print >>outFile, "\\draw["+PAINTSTYLES[VARIANTS.index(a)]+"] (0,",i*0.8,") -- +(2,0) node[anchor=west,color=black] {"+a+"};"
-    print >>outFile,"\\end{tikzpicture}"        
     
     # Print cactus plot
     for variantGroup in VARIANT_GROUPS:
     
         print >>outFile,"\\subsection*{Cactus plot marked for "+" and ".join(variantGroup)+ "}"
         print >>outFile,"\\centering\\begin{tikzpicture}[scale=0.4]"
+        
+        # Draw the gray lines
+        for j in range(0,len(variantGroup)):
+        
+            print >>outFile,"\\node at (-3,",(0.5+j)*HEIGHT,") {\\rotatebox{90}{\\underline{"+variantGroup[j].split(".")[0]+"}}};"
+        
+            for j2 in range(0,len(variantGroup)):
+                if j!=j2:
+                    allTimes = performances[variantGroup[j2]]
+                    allTimes.sort()
+                    
+                    print >>outFile,"\\draw[semithick,color=plotGrayColor1]",
+                    drawnFirst = "(0,"+str(j*HEIGHT)+")"
+                    nofFilesSoFar = 0
+                    for t in allTimes:
+                        nofFilesSoFar += 1
+                        xPos = timeToXCoordinate(t)
+                        yPos = (HEIGHT/float(totalNofFiles))*nofFilesSoFar + j*HEIGHT
+                        if (xPos)<=0:
+                            drawnFirst = "(0,"+str(yPos)+")"
+                        else:
+                            if not drawnFirst is None:
+                                print >>outFile,drawnFirst;
+                                drawnFirst = None
+                            print >>outFile,"-| (",xPos,",",yPos,")",
+                    print >>outFile,";"
+
+                # Finally, draw the red line!        
+                allTimes = performances[variantGroup[j]]
+                allTimes.sort()
+                
+                print >>outFile,"\\draw[thick,color=plotColor1]",
+                drawnFirst = "(0,"+str(j*HEIGHT)+")"
+                nofFilesSoFar = 0
+                for t in allTimes:
+                    nofFilesSoFar += 1
+                    xPos = timeToXCoordinate(t)
+                    yPos = (HEIGHT/float(totalNofFiles))*nofFilesSoFar + j*HEIGHT
+                    if (xPos)<=0:
+                        drawnFirst = "(0,"+str(yPos)+")"
+                    else:
+                        if not drawnFirst is None:
+                            print >>outFile,drawnFirst;
+                            drawnFirst = None
+                        print >>outFile,"-| (",xPos,",",yPos,")",
+                print >>outFile,";"
+
+
         # -> Boundary lines    
-        print >>outFile,"\\draw[very thick,->] (0,0) -- (",WIDTH+OVERSHOOT,",0) node[anchor=west] {Time};"
-        print >>outFile,"\\draw[very thick,->] (0,0) -- (0,",HEIGHT+OVERSHOOT,") node[anchor=south] {Files};"
-        print >>outFile,"\\draw[dashed] (",WIDTH,",0) -- +(0,",HEIGHT,");"
-        print >>outFile,"\\draw[dashed] (0,",HEIGHT,") -- +(",WIDTH,",0);"
+        print >>outFile,"\\draw[very thick,->] (0,0) -- (",WIDTH+OVERSHOOT,",0) node[anchor=south] {Time (s)};"
+        print >>outFile,"\\draw[very thick,->] (0,0) -- (0,",HEIGHT*len(variantGroup)+OVERSHOOT,") node[anchor=west] {\# Files};"
+        for j in range(1,len(variantGroup)):
+            print >>outFile,"\\draw[very thick,->] (0,",HEIGHT*j,") -- +(",WIDTH+OVERSHOOT,",0);"
+
         # -> Nof files tick
-        for i in range(NOF_FILES_TICK,totalNofFiles+1,NOF_FILES_TICK):
-            pos = (HEIGHT/float(totalNofFiles))*i
-            print >>outFile,"\\draw[semithick] (0.1,",pos,") -- +(-0.2,0) node[anchor=east] {\small "+str(i)+"};"
+        for j in range(0,len(variantGroup)):
+            for i in range(NOF_FILES_TICK,totalNofFiles+1,NOF_FILES_TICK):
+                pos = (HEIGHT/float(totalNofFiles))*i
+                print >>outFile,"\\draw[semithick] (0.1,",pos+j*HEIGHT,") -- +(-0.2,0) node[anchor=east] {\small "+str(i)+"};"
+
         # -> Time tick
         for i in TIME_AXIS_MARKS:
             pos = timeToXCoordinate(i)
             print >>outFile,"\\draw[semithick] (",pos,",0.1) -- +(0,-0.2) node[anchor=north] {\small "+str(i)+"};"
+        for j in range(1,len(variantGroup)):
+            for i in TIME_AXIS_MARKS:
+                pos = timeToXCoordinate(i)
+                print >>outFile,"\\draw[semithick] (",pos,",",j*HEIGHT+0.1,") -- +(0,-0.2);"
+
+                
+        print >>outFile,"\\end{tikzpicture}\n\n"        
+        
+        
+        
+        
+        
+    
+    
+    print >>outFile,"\\end{document}"
+    
+                
+    
+
+
+if False:
 
         # -> Cactus plot ---> Gray Parts        
         for i,filename in enumerate(performances):
@@ -125,18 +198,4 @@ with open("summary.tex","w") as outFile:
                     print >>outFile,"-| (",xPos,",",yPos,")",
                 print >>outFile,";"
              
-                
-        print >>outFile,"\\end{tikzpicture}\n\n"        
-        
-        
-        
-        
-        
-    
-    
-    print >>outFile,"\\end{document}"
-    
-                
-    
-
 
