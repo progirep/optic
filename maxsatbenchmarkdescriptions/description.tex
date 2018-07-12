@@ -1,0 +1,37 @@
+\documentclass[a4paper,10pt]{IEEEtran}
+\usepackage[latin1]{inputenc}
+\usepackage[pdftex,colorlinks,linkcolor=black,citecolor=black]{hyperref}
+\usepackage{amsmath}
+
+\author{\IEEEauthorblockN{R\"udiger Ehlers \\}
+\IEEEauthorblockA{University of Bremen \& DFKI GmbH\\
+Germany
+}}
+
+\begin{document}
+\title{Approximately Propagation Complete and Approximately Conflict Propagating SAT Encoding Computation MaxSAT Benchmarks}
+\maketitle
+
+\section{Description}
+This benchmark set contains MaxSAT instances that encode the problem of finding approximately propagation complete and approximately conflict propagating SAT encodings for a couple of interesting constraints. The approach for reducing this problem to MaxSAT is explained in a paper \cite{EP2018} to be published at the 21$^\mathit{st}$ International Conference on Theory and Applications of Satisfiability Testing (SAT 2018).
+
+The benchmarks set is based on encoding the constraints used in the experimental evaluation of the paper mentioned above , where constraint encodings for the progagation quality tuples $(\infty,\infty)$, $(1,\infty)$, $(2,\infty)$, $(3,\infty)$, $(3,3)$, and $(\infty,1)$ are computed. The meaning of these tuples is also mentioned in this paper. 
+
+To keep the benchmark set small, a couple of benchmarks for which both the solvers \texttt{LMHS} \cite{DBLP:conf/sat/SaikkoBJ16} (in the version from March 2018) and \texttt{maxino-2015-k16} \cite{DBLP:conf/ijcai/AlvianoDR15} both need less than 3 seconds of solving time on a moderately modern computer (using an Intel(R) Core(TM) i5-4200U CPU with 1.60\,GHz computation speed) have been removed. Furthermore, MaxSAT instances whose computation takes more than 30 minutes on the said computer are also left out.
+
+The benchmark file names contain:
+\begin{itemize}
+\item the name of the constraint that is to be encoded into conjunctive normal form, and
+\end{itemize}
+\newpage
+\begin{itemize}
+\item the propagation quality tuple, where the elements are concatenated and $\infty$ elements are replaced by ``\texttt{99}''.
+\end{itemize}
+Some of these constraints are taken from the set of examples supplied with the GenPCE tool by Brain et al.~\cite{DBLP:conf/vmcai/BrainHKM16} for computing propagation SAT complete encodings.
+
+The program to compute the MaxSAT benchmarks is available at \url{https://github.com/progirep/optic} in the branch ``\texttt{MaxSATEvaluationBenchmarkGeneration}''.
+
+\bibliographystyle{IEEEtran}
+\bibliography{description}
+
+\end{document}
